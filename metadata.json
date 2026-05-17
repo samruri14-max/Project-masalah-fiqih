@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Project masalah fiqih",
+  "description": "Aplikasi kumpulan masalah fiqih dengan database Google Spreadsheet, mendukung teks Arab RTL dan fitur bookmark.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
