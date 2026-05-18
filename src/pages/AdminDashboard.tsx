@@ -44,10 +44,11 @@ export default function AdminDashboard() {
         sessionStorage.setItem("admin_token", res.token!);
         loadData();
       } else {
-        setError(res.error || "Password salah");
+        setError(res.error || "Password salah atau akses ditolak");
       }
-    } catch (e) {
-      setError("Terjadi kesalahan server");
+    } catch (e: any) {
+      console.error("Login error:", e);
+      setError(`Kesalahan server: ${e.message || "Gagal menghubungi API"}`);
     } finally {
       setLoading(false);
     }

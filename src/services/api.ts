@@ -49,6 +49,13 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password }),
     });
+    
+    if (!res.ok) {
+      if (res.status === 401) return { success: false, error: "Password salah" };
+      const text = await res.text();
+      throw new Error(`Server returned ${res.status}: ${text.slice(0, 100)}`);
+    }
+    
     return res.json();
   }
 };
