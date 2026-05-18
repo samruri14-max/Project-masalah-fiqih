@@ -74,13 +74,11 @@ async function setupApp() {
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else {
-    // In production (e.g. locally with npm run build), serve static files from dist
-    // NOTE: On Vercel, static files are usually handled by Vercel's edge network via vercel.json
+  } else if (!process.env.VERCEL) {
+    // ONLY serve static files if NOT on Vercel (e.g. standard production start)
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
-      // Check if file exists, if not send index.html for SPA
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
@@ -90,23 +88,22 @@ async function setupApp() {
 if (!process.env.GAS_URL) console.warn("WARNING: GAS_URL is not set");
 if (!process.env.ADMIN_PASSWORD) console.warn("WARNING: ADMIN_PASSWORD is not set, using default 'admin123'");
 
-// In standard environments (AI Studio, local), start the server
-async function start() {
-  if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
-    await setupApp();
-    const PORT = 3000;
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-    });
-  } else {
-    // On Vercel, routes inside setupApp are not strictly needed if vercel.json handles static,
-    // but we run it just in case. Note: on Vercel we don't 'listen'
+// Initialize app-level setups
+if (process.env.NODE_ENV !== "production") {
+  setupApp();
+} else {
+  // In production, we only need setupApp if we're not on Vercel (for standalone server)
+  if (!process.env.VERCEL) {
     setupApp();
   }
 }
 
-start().catch(err => {
-  console.error("Failed to start server:", err);
-});
+// Start listener ONLY if not on Vercel
+if (!process.env.VERCEL) {
+  const PORT = 3000;
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
 
 export default app;
