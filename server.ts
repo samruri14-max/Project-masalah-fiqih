@@ -1,22 +1,11 @@
 import express from "express";
 import path from "path";
-import dotenv from "dotenv";
-import apiRouter from "./src/api-routes";
-
-dotenv.config();
+import apiApp from "./api/index";
 
 const app = express();
-app.use(express.json());
 
-// Logging middleware
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
-
-// APIs
-app.use("/api", apiRouter);
-app.use("/", apiRouter); // Fallback for various environments
+// Use the same API app
+app.use(apiApp);
 
 // Setup Vite or Static File Serving
 async function setupApp() {
